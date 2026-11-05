@@ -1,0 +1,15 @@
+## Interface: 16001, 11509
+## Title: EzOOC
+## Notes: Say a line out of character, in (( )), and answer someone's OOC line with one click.
+## Author: Marc
+## Version: @project-version@
+## IconTexture: Interface\Icons\INV_Misc_Note_01
+## SavedVariables: EzOOCDB
+## SavedVariablesPerCharacter: EzOOCCharDB
+
+Data.lua
+Ooc.lua
+Settings.lua
+Core.lua
+Listen.lua
+Box.lua

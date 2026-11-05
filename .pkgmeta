@@ -1,0 +1,12 @@
+package-as: EzOOC
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
+ignore:
+  - README.md
+  - .luacheckrc
+  - media
+  - tests
+  - .githooks
