@@ -14,7 +14,7 @@ local ROW = 18   -- dropdown row height
 
 local box, edit, header, hint, list, title
 local channel, whisperTo = "SAY", nil  -- the box's channel (and whom it whispers), kept for the session
-local opening    -- the speaker a [Reply] opens the box on
+local opening    -- the speaker a [Reply] opens the box on (false: a whisper from another addon)
 local answering  -- the speaker (ns.speakers) the box is answering, while it stays on their channel
 local skipWord  -- after "/w bob " filled in Bob's surname: the surname, skipped if typed next
 local held      -- the line you had when you picked "Whisper..." from the list: it comes back once the name is in
@@ -425,7 +425,9 @@ local function MakeBox()
     f:SetScript("OnMouseDown", function() e:SetFocus() end)
     f:SetScript("OnShow", function()
         historyAt = #history + 1
-        local s = opening or ns.Pending()
+        -- false: opened on a whisper (ns.OpenWhisper), so no pending line to follow.
+        local s = opening
+        if s == nil then s = ns.Pending() end
         opening = nil
         if s then Answer(s) else SetChannel(channel) end
         e:SetFocus()
@@ -448,6 +450,25 @@ local function OpenBox()
     box:Show()
 end
 ns.OpenBox = OpenBox
+
+-- Other addons (EzAcquaintances' book): the box on a whisper to name ("First Surname"), open or not. The box stays on
+-- them, as if picked from the list, and doesn't follow a pending OOC line instead.
+function ns.OpenWhisper(name)
+    whisperTo, channel = name, "WHISPER"
+    if box and box:IsShown() then
+        SetChannel("WHISPER", name)
+        edit:SetFocus()
+    else
+        opening = false
+        OpenBox()
+    end
+    DropWhisperCommand()
+end
+
+-- For other addons: EzOOCAPI.Whisper("First Surname") opens the box on a whisper to them.
+EzOOCAPI = {
+    Whisper = function(name) ns.OpenWhisper(name) end,
+}
 
 -- [Reply] and /ooc reply: the box on s's channel (EzOOCDB.answer), open or not.
 function ns.OpenReply(s)

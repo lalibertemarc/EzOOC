@@ -4,6 +4,7 @@ self = false
 exclude_files = { "tests/" }
 
 globals = {
+    "EzOOCAPI",
     "EzOOCDB",
     "EzOOCCharDB",
     "EzOOC_ToggleBox",

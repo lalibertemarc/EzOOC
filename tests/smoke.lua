@@ -290,5 +290,20 @@ Type("still me")
 eq(Last().chatType, "WHISPER", "follow off keeps the box's channel")
 EzOOCDB.follow = true
 
+-- Another addon (EzAcquaintances' book) opens the box on a whisper, even with an OOC line waiting.
+now = now + 1
+Fire("CHAT_MSG_PARTY", "((brb))", "Carl-Reed")
+EzOOCAPI.Whisper("Fay Moss")
+check(box().shown, "EzOOCAPI.Whisper opens the box")
+Type("hi")
+eq(Last().chatType, "WHISPER", "EzOOCAPI.Whisper whispers, not the waiting line's channel")
+eq(Last().to, "Fay Moss", "EzOOCAPI.Whisper whispers them")
+EzOOC_ToggleBox("up")
+edit().text = "/w Ca"
+EzOOCAPI.Whisper("Gus Pike")
+eq(edit().text, "", "an unfinished /w goes when it switches")
+Type("yo")
+eq(Last().to, "Gus Pike", "EzOOCAPI.Whisper on an open box switches to them")
+
 print(("%d checks, %d failures"):format(checks, failures))
 if failures > 0 then os.exit(1) end

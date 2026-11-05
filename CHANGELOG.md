@@ -1,5 +1,9 @@
 # EzOOC
 
+## Unreleased
+
+- **Whisper from EzAcquaintances.** Its book's Whisper button can open this box already on a whisper to that person (right-click the button and pick "Out of character").
+
 ## v1.0.0
 
 - **Out of character, in brackets.** `/ooc <text>` says `(( <text> ))`; `/ooc p`, `y`, `g`, `o`, `r`, `e` and `w <name>` put it in party, yell, guild, officer, raid, an emote or a whisper. Brackets you type yourself aren't doubled, and `/ooc spaces off` writes `((like this))`.
