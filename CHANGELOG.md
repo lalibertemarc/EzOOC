@@ -1,6 +1,6 @@
 # EzOOC
 
-## Unreleased
+## v1.0.0
 
 - **Out of character, in brackets.** `/ooc <text>` says `(( <text> ))`; `/ooc p`, `y`, `g`, `o`, `r`, `e` and `w <name>` put it in party, yell, guild, officer, raid, an emote or a whisper. Brackets you type yourself aren't doubled, and `/ooc spaces off` writes `((like this))`.
 - **A box of your own.** A key binding (Options > Keybindings > EzOOC) or `/ooc box` opens a small chat-style box: Enter says the line in `(( ))`, the channel shows at the start of the line, `/p ` or `/w bob ` switches it (surnames filled in for people it knows), Tab whispers the next person it knows, and Up brings back earlier lines.
