@@ -29,7 +29,7 @@ Bind a key under **Options > Keybindings > EzOOC** (or type `/ooc box`). A small
 
 ## Answering
 
-Anyone's line with `((` in it, or starting with `OOC:`, or tagged `[OOC]`, counts as out of character. For each one, EzOOC:
+Anyone's line with `((` in it, starting with `OOC:` or `OOC -`, or tagged `[OOC]`, counts as out of character. For each one, EzOOC:
 
 - adds a **[Reply]** link after it in your chat. Click it and the box opens on their channel: say for say, party for party, a whisper back for a whisper. The box title shows who you're answering ("OOC: answering Bob (say)").
 - remembers them for a couple of minutes. **Press your box key and it opens on them by itself**, as long as you haven't said anything OOC since.
@@ -69,4 +69,4 @@ A message can only be 255 characters long. Go past that and EzOOC cuts it betwee
 
 ## Tell us what you think!
 
-Does your guild write OOC some other way: single brackets, `//`, `OOC -`? Is there a channel you wish it could answer in? **Leave a comment or open an issue on [GitHub](https://github.com/lalibertemarc/EzOOC/issues)** and it might be in the next update.
+Does your guild write OOC some other way: single brackets, `//`, `{{ }}`? Is there a channel you wish it could answer in? **Leave a comment or open an issue on [GitHub](https://github.com/lalibertemarc/EzOOC/issues)** and it might be in the next update.
