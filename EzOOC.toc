@@ -6,6 +6,7 @@
 ## IconTexture: Interface\Icons\INV_Misc_Note_01
 ## SavedVariables: EzOOCDB
 ## SavedVariablesPerCharacter: EzOOCCharDB
+## X-Curse-Project-ID: 1785028
 
 Data.lua
 Ooc.lua
