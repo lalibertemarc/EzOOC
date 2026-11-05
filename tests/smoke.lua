@@ -185,6 +185,32 @@ Slash("blocked")
 eq(#sent, count, "chat lockdown sends nothing")
 locked = false
 
+-- A long line: in /say one piece per press (Forever blocks a second send in the same press), the rest wait for
+-- /ooc more or Enter on an empty line in the box (it opens for them); party gets every piece at once.
+local pieces = #ns.Lines(long, true)
+sent = {}
+Slash(long)
+eq(#sent, 1, "a long /say line sends one piece")
+eq(ns.Waiting(), pieces - 1, "the rest wait")
+Slash("more")
+eq(#sent, 2, "/ooc more says the next piece")
+local boxEdit = named.EzOOCBoxEdit
+check(boxEdit ~= nil, "pieces waiting open the box")
+while boxEdit and ns.Waiting() > 0 do boxEdit.scripts.OnEnterPressed(boxEdit) end
+eq(#sent, pieces, "Enter in the box says the rest, one each")
+sent = {}
+Slash("more")
+eq(#sent, 0, "nothing more waits")
+Slash("p " .. long)
+eq(#sent, pieces, "party sends every piece at once")
+eq(ns.Waiting(), 0, "party leaves nothing waiting")
+Slash(long)
+Slash("brb")
+eq(ns.Waiting(), 0, "a new line drops the waiting pieces")
+Slash(long)
+if boxEdit then boxEdit.scripts.OnEscapePressed(boxEdit) end
+eq(ns.Waiting(), 0, "Escape drops the waiting pieces")
+
 ---------------------------------------------------------------------------
 -- Hearing OOC lines
 ---------------------------------------------------------------------------
@@ -228,7 +254,7 @@ group = { { name = "Carl", surname = "Reed" } }
 now = now + 10
 Fire("CHAT_MSG_PARTY", "((one sec, door))", "Carl-Reed")
 EzOOC_ToggleBox("down")
-check(not box(), "the key's press does nothing")
+check(not (box() and box().shown), "the key's press does nothing")
 EzOOC_ToggleBox("up")
 check(box() and box().shown, "the key's release opens the box")
 check(edit().focus, "the box has the keyboard")

@@ -35,6 +35,56 @@ local function ChatLocked()
     return C_ChatInfo and C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown()
 end
 
+-- A line past 255 bytes goes out in pieces, but Forever lets a key press say only one message in a public channel
+-- (ns.ONE_PER_PRESS): a second SendChatMessage in the same press is blocked. So the first piece goes now and the
+-- rest wait here, one per press: Enter in the box (it opens for them) or /ooc more. Escape in the box, or a new
+-- line, drops them.
+local waiting  -- { chatType, target, pieces = { ... } }, nil when nothing waits
+
+local function Waiting()
+    return waiting and #waiting.pieces or 0
+end
+ns.Waiting = Waiting
+
+local function DropWaiting(quiet)
+    if waiting and not quiet then Print(("Dropped the rest of your line (%d more)."):format(#waiting.pieces)) end
+    waiting = nil
+end
+ns.DropWaiting = DropWaiting
+
+local function WaitingNote()
+    local n = Waiting()
+    if n == 0 then return end
+    Print(("%d more to say: press Enter in the box (or /ooc more) for each, Escape drops %s."):format(n,
+        n == 1 and "it" or "them"))
+end
+
+local function SendPieces(pieces, chatType, target)
+    DropWaiting()
+    if not ns.ONE_PER_PRESS[chatType] then
+        for _, msg in ipairs(pieces) do Send(msg, chatType, target) end
+        return
+    end
+    Send(pieces[1], chatType, target)
+    if #pieces < 2 then return end
+    waiting = { chatType = chatType, target = target, pieces = { select(2, unpack(pieces)) } }
+    WaitingNote()
+    ns.OpenBox()
+end
+
+-- The next waiting piece (a key press or slash only). False when nothing waits.
+local function SendNext()
+    if not waiting then return false end
+    if ChatLocked() then
+        Print("The game blocks addon chat right now.")
+        return true
+    end
+    Send(table.remove(waiting.pieces, 1), waiting.chatType, waiting.target)
+    if #waiting.pieces == 0 then waiting = nil end
+    return true
+end
+ns.SendNext = SendNext
+
 ---------------------------------------------------------------------------
 -- People. Forever names have surnames and whispers need "First Surname", so a typed first name is looked up among
 -- the people you'd likely whisper: your target, who spoke out of character lately, those you whispered with
@@ -175,9 +225,7 @@ local function Say(text, chatType, target)
     if chatType == "WHISPER" and not target then return Print("Whisper whom? /ooc w <name> <text>") end
     if ChatLocked() then return Print("The game blocks addon chat right now.") end
     answeredAt = GetTime()
-    for _, msg in ipairs(lines) do
-        Send(msg, chatType, target)
-    end
+    SendPieces(lines, chatType, target)
 end
 ns.Say = Say
 
@@ -244,6 +292,7 @@ local HELP = {
     "/ooc <text> - say (( <text> ))",
     "/ooc y|p|g|o|r|e <text> - yell, party, guild, officer, raid or emote it (/ooc s <text> to say a line that starts with a command word)",
     "/ooc w <name> <text> - whisper it (\"First Surname\", %t, or the first name of your target, someone who spoke OOC, whispered with you or is in your group)",
+    "/ooc more - say the next piece of a line too long for one message (the box's Enter does too)",
     "/ooc reply [text] - answer the last one who spoke out of character (also /oocr), or open the box on them",
     "/ooc answer same|whisper - answer where they said it, or always in a whisper",
     "/ooc link [on|off] - a [Reply] link after other people's OOC lines",
@@ -262,6 +311,10 @@ end
 local COMMANDS = {
     help = Help,
     reply = Reply,
+    more = function()
+        if not SendNext() then return Print("Nothing waits to be said.") end
+        WaitingNote()
+    end,
     answer = SetAnswer,
     link = function(arg) Switch("link", arg, "link", "OOC lines get a [Reply] link.", "No more [Reply] links.") end,
     follow = function(arg)
