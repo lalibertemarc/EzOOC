@@ -468,6 +468,10 @@ end
 -- For other addons: EzOOCAPI.Whisper("First Surname") opens the box on a whisper to them.
 EzOOCAPI = {
     Whisper = function(name) ns.OpenWhisper(name) end,
+    -- EzLines: the messages for text, each in its own (( )) as your options say, none past 255 bytes. Sends nothing.
+    Lines = function(text) return ns.Lines(text, EzOOCDB.spaced) end,
+    -- EzLines, when its OOC line went out: the box stops offering to answer the last OOC speaker.
+    Said = function() ns.Answered() end,
 }
 
 -- [Reply] and /ooc reply: the box on s's channel (EzOOCDB.answer), open or not.

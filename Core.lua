@@ -229,6 +229,11 @@ local function Say(text, chatType, target)
 end
 ns.Say = Say
 
+-- An OOC line of yours went out some other way (EzLines): the newest speaker counts as answered.
+function ns.Answered()
+    answeredAt = GetTime()
+end
+
 -- rest of a /ooc <letter> or box /<channel> line
 local function SayTo(chatType, rest)
     if chatType == "WHISPER" then
