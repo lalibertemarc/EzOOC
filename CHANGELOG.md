@@ -1,8 +1,8 @@
 # EzOOC
 
-## Unreleased
+## v1.1.1
 
-- **Fixed, for real this time:** a key that opens the box, its keybind or an action bar macro running `C:/Program Files/Git/ooc box`, no longer types its letter into it.
+- **Fixed:** a key that opens the box, its keybind or an action bar macro running `/ooc box`, no longer types its letter into it.
 
 ## v1.1.0
 
