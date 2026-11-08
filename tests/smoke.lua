@@ -354,6 +354,13 @@ check(not Guard(), "guard stops after a few frames")
 Land("y")
 check(edit().text == "y", "a letter typed later stays")
 edit().text = ""
+-- A macro running "/… box" on an action bar key: the letter lands in the same frame (key log: "=").
+edit().focus = false
+Slash("box")
+Land("=")
+Frames(1)
+check(edit().text == "", "the macro key's letter taken out")
+check(edit().focus, "box command gives the box the keyboard")
 
 print(("%d checks, %d failures"):format(checks, failures))
 if failures > 0 then os.exit(1) end

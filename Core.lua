@@ -330,7 +330,7 @@ local COMMANDS = {
         Switch("spaced", arg, "spaces", "Lines go out (( like this )).", "Lines go out ((like this)).")
     end,
     preview = Preview,
-    box = function() ns.OpenBox() end,
+    box = function() ns.FocusBox() end,
     config = OpenSettings,
 }
 
