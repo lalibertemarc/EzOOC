@@ -34,6 +34,8 @@ local function Stub(name)
         if k == "IsShown" then return function(self) return self.shown end end
         if k == "SetText" then return function(self, t) self.text = t end end
         if k == "GetText" then return function(self) return self.text end end
+        if k == "GetCursorPosition" then return function(self) return rawget(self, "cursor") or #self.text end end
+        if k == "SetCursorPosition" then return function(self, n) self.cursor = n end end
         if k == "RegisterEvent" then return function(self, e) events[e] = events[e] or {}; table.insert(events[e], self) end end
         if k == "CreateFontString" or k == "CreateTexture" then return function() return Stub() end end
         if k == "HasFocus" then return function(self) return self.focus end end
@@ -57,6 +59,8 @@ C_ChatInfo = {
     InChatMessagingLockdown = function() return locked end,
 }
 function issecretvalue() return false end
+local boxKeys = { "SHIFT-O" }
+function GetBindingKey() return unpack(boxKeys) end
 local function UnitOf(unit)
     if unit == "player" then return player end
     if unit == "target" then return target end
@@ -304,6 +308,37 @@ EzOOCAPI.Whisper("Gus Pike")
 eq(edit().text, "", "an unfinished /w goes when it switches")
 Type("yo")
 eq(Last().to, "Gus Pike", "EzOOCAPI.Whisper on an open box switches to them")
+
+
+-- The bound key's own letter, landing right after the key opened the box, is taken out; later letters stay.
+local function Char(c)
+    edit().text = edit().text .. c
+    edit().cursor = nil
+    edit().scripts.OnChar(edit(), c)
+end
+box():Hide()
+edit().text = ""
+EzOOC_ToggleBox("up")
+Char("O")
+eq(edit().text, "", "Shift key's letter dropped")
+Char("o")
+eq(edit().text, "o", "the next letter stays")
+boxKeys = { "CTRL-O", "K" }
+edit().text = ""
+edit().focus = false
+EzOOC_ToggleBox("up")  -- open but let go of: takes the keyboard back
+Char("x")
+eq(edit().text, "x", "another key's letter stays")
+edit().text = ""
+edit().focus = false
+EzOOC_ToggleBox("up")
+Char("k")
+eq(edit().text, "", "the key's letter dropped, any case")
+edit().focus = false
+EzOOC_ToggleBox("up")
+now = now + 1
+Char("k")
+eq(edit().text, "k", "a letter typed later stays")
 
 print(("%d checks, %d failures"):format(checks, failures))
 if failures > 0 then os.exit(1) end
