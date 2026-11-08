@@ -1,5 +1,9 @@
 # EzOOC
 
+## Unreleased
+
+- **Fixed, for real this time:** the box's keybind letter no longer lands in the box, whichever key you bind.
+
 ## v1.1.0
 
 - **Whisper from EzAcquaintances.** Its book's Whisper button can open this box already on a whisper to that person (right-click the button and pick "Out of character").

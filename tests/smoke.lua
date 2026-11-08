@@ -48,7 +48,12 @@ end
 
 function GetBuildInfo() return "1.60.1", "70707", "", 16001 end
 function GetTime() return now end
-function CreateFrame(_, name) return Stub(name) end
+local allFrames = {}
+function CreateFrame(_, name)
+    local f = Stub(name)
+    allFrames[#allFrames + 1] = f
+    return f
+end
 UIParent = Stub("UIParent")
 ChatFontNormal = {}
 DEFAULT_CHAT_FRAME = { AddMessage = function(_, m) printed[#printed + 1] = m end }
@@ -59,8 +64,6 @@ C_ChatInfo = {
     InChatMessagingLockdown = function() return locked end,
 }
 function issecretvalue() return false end
-local boxKeys = { "SHIFT-O" }
-function GetBindingKey() return unpack(boxKeys) end
 local function UnitOf(unit)
     if unit == "player" then return player end
     if unit == "target" then return target end
@@ -310,35 +313,47 @@ Type("yo")
 eq(Last().to, "Gus Pike", "EzOOCAPI.Whisper on an open box switches to them")
 
 
--- The bound key's own letter, landing right after the key opened the box, is taken out; later letters stay.
-local function Char(c)
-    edit().text = edit().text .. c
-    edit().cursor = nil
-    edit().scripts.OnChar(edit(), c)
+-- The key's letter turning up within a few frames of the key opening the box is taken out; later letters stay.
+local function Guard()
+    for _, f in ipairs(allFrames) do if f.scripts.OnUpdate then return f end end
+end
+local function Land(c, at)
+    local e = edit()
+    e.text = e.text:sub(1, at or #e.text) .. c .. e.text:sub((at or #e.text) + 1)
+    e.cursor = (at or #e.text - #c) + #c
+end
+local function Frames(n)
+    for _ = 1, n do
+        local g = Guard()
+        if g then g.scripts.OnUpdate(g, 0.016) end
+    end
 end
 box():Hide()
 edit().text = ""
 EzOOC_ToggleBox("up")
-Char("O")
-eq(edit().text, "", "Shift key's letter dropped")
-Char("o")
-eq(edit().text, "o", "the next letter stays")
-boxKeys = { "CTRL-O", "K" }
-edit().text = ""
+Frames(1)
+Land("t")
+Frames(1)
+check(edit().text == "", "the key's letter, a frame late, taken out")
+check(not Guard(), "guard stops once it took one")
+Land("t")
+check(edit().text == "t", "the next letter stays")
 edit().focus = false
+edit().text = "hello"
+edit().cursor = 2
 EzOOC_ToggleBox("up")  -- open but let go of: takes the keyboard back
-Char("x")
-eq(edit().text, "x", "another key's letter stays")
+Land("1", 2)
+Frames(1)
+check(edit().text == "hello", "a letter at the cursor taken out too, any key")
+check(edit().cursor == 2, "cursor back where it was")
+edit().focus = false
 edit().text = ""
-edit().focus = false
 EzOOC_ToggleBox("up")
-Char("k")
-eq(edit().text, "", "the key's letter dropped, any case")
-edit().focus = false
-EzOOC_ToggleBox("up")
-now = now + 1
-Char("k")
-eq(edit().text, "k", "a letter typed later stays")
+Frames(3)
+check(not Guard(), "guard stops after a few frames")
+Land("y")
+check(edit().text == "y", "a letter typed later stays")
+edit().text = ""
 
 print(("%d checks, %d failures"):format(checks, failures))
 if failures > 0 then os.exit(1) end

@@ -26,6 +26,6 @@ read_globals = {
     -- Namespaced APIs
     "C_ChatInfo", "issecretvalue",
     -- Global APIs
-    "GetBuildInfo", "GetTime", "GetBindingKey", "UnitName", "UnitExists", "UnitIsPlayer", "SendChatMessage", "InCombatLockdown",
+    "GetBuildInfo", "GetTime", "UnitName", "UnitExists", "UnitIsPlayer", "SendChatMessage", "InCombatLockdown",
     "IsInGroup", "IsInRaid", "IsInGuild", "GetNumGroupMembers", "ChatTypeInfo",
 }
