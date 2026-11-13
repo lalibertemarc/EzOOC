@@ -1,5 +1,9 @@
 # EzOOC
 
+## Unreleased
+
+- With EzCaret installed, the box tidies your line as you send it: common typos fixed, a capital at the start of sentences and a period at the end, inside the (( )).
+
 ## v1.1.1
 
 - **Fixed:** a key that opens the box, its keybind or an action bar macro running `/ooc box`, no longer types its letter into it.
